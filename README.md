@@ -235,6 +235,7 @@ post { success { echo '[SUCCESS] Pipeline executed successfully.' } failure { ec
 generatedataset
 
 
+```
 import requests
 import random
 import time
@@ -275,13 +276,13 @@ def inject_issue(jenkinsfile, issue_type, stage):
     return modified
 
 def encode_pipeline(jenkinsfile):
-    return f"""<?xml version='1.1' encoding='UTF-8'?>
+    return f\"\"\"<?xml version='1.1' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job">
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps">
     <script>{jenkinsfile.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")}</script>
     <sandbox>true</sandbox>
   </definition>
-</flow-definition>"""
+</flow-definition>\"\"\"
 
 def update_pipeline_config(script):
     headers = {"Content-Type": "application/xml"}
@@ -317,7 +318,7 @@ def get_build_log(build_number):
 dataset = []
 
 for i in range(NUM_RUNS):
-    print(f"\n▶️ Running build {i+1}/{NUM_RUNS}")
+    print(f"\\n▶️ Running build {i+1}/{NUM_RUNS}")
 
     base = load_base_pipeline()
 
@@ -365,4 +366,5 @@ for i in range(NUM_RUNS):
 with open("dataset.json", "w") as f:
     json.dump(dataset, f, indent=2)
 
-print("\n🎉 Dataset generation complete. Saved to dataset.json")
+print("\\n🎉 Dataset generation complete. Saved to dataset.json")
+```
