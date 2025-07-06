@@ -233,12 +233,23 @@ post { success { echo '[SUCCESS] Pipeline executed successfully.' } failure { ec
 
 
 generatedataset
+```
+def encode_pipeline(jenkinsfile):
+    escaped = (
+        jenkinsfile
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+    )
 
-Give me a complete and valid Jenkins pipeline job config.xml (in XML format) that can be used to create or update a pipeline job via Jenkins REST API.
-
-Requirements:
-- The pipeline should use the declarative pipeline syntax
-- It must include a single stage called 'Test' that echoes 'Hello from Jenkins'
-- It must include all required fields like <definition>, <sandbox>, <triggers>, etc.
-- The <script> block should be escaped correctly for XML (use &lt;, &gt;, &amp;)
-- Output only the XML, no explanations
+    return f"""<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.40">
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.93">
+    <script>{escaped}</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+</flow-definition>"""
+```
