@@ -232,3 +232,17 @@ post { success { echo '[SUCCESS] Pipeline executed successfully.' } failure { ec
 
 
 
+import jenkins.model.*
+import hudson.security.*
+
+def user = User.get('admin')
+def apiTokenProperty = user.getProperty(jenkins.security.ApiTokenProperty.class)
+
+def newTokenName = "local-script-token"
+def result = apiTokenProperty.tokenStore.generateNewToken(newTokenName)
+user.save()
+
+println("Token created!")
+println("Token name: " + newTokenName)
+println("Token value: " + result.plainValue)
+
