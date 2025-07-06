@@ -178,3 +178,57 @@ Would you like a downloadable PDF version, a PowerPoint slide, or a Notion/Markd
 
 And should I generate a DAG image too for you?
 
+
+
+
+
+pipeline { agent any
+
+environment { DOCKERHUB_USER = "dummyuser" DOCKERHUB_REPO = "dummyrepo" IMAGE_TAG = "latest" }
+
+stages { stage('Checkout') { steps { echo '[INFO] Cloning repository...' // Simulated: git clone echo '[DEBUG] Git branch: main' echo '[INFO] Checked out commit abc1234' } }
+
+stage('Build Frontend') {
+  steps {
+    echo '[INFO] Installing frontend dependencies...'
+    sh 'npm install'
+    echo '[INFO] Building frontend application...'
+    sh 'npm run build'
+    echo '[DEBUG] Build output located in /dist'
+  }
+}
+
+stage('Build Backend') {
+  steps {
+    echo '[INFO] Setting up backend environment...'
+    sh 'pip install -r requirements.txt'
+    echo '[INFO] Running backend tests...'
+    sh 'pytest tests/ || exit 1'
+    echo '[DEBUG] Test summary: 42 passed, 0 failed'
+  }
+}
+
+stage('Dockerize') {
+  steps {
+    echo '[INFO] Building Docker image...'
+    sh 'docker build -t $DOCKERHUB_USER/$DOCKERHUB_REPO:$IMAGE_TAG .'
+    echo '[INFO] Pushing Docker image to DockerHub...'
+    sh 'docker push $DOCKERHUB_USER/$DOCKERHUB_REPO:$IMAGE_TAG'
+    echo '[DEBUG] Image pushed successfully'
+  }
+}
+
+stage('Deploy') {
+  steps {
+    echo '[INFO] Deploying application locally...'
+    sh 'docker run -d -p 80:80 $DOCKERHUB_USER/$DOCKERHUB_REPO:$IMAGE_TAG'
+    echo '[DEBUG] Deployment complete on port 80'
+  }
+}
+
+}
+
+post { success { echo '[SUCCESS] Pipeline executed successfully.' } failure { echo '[FAILURE] Pipeline execution failed.' } } }
+
+
+
